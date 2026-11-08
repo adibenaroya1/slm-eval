@@ -58,6 +58,18 @@ If `AskUserQuestion` isn't available (e.g. on claude.ai), ask the same questions
 
 The SLM landscape changes month to month, so **research fresh. Don't rely on memory** for which models exist or what they score. Use WebSearch / WebFetch, or whatever web tools you have.
 
+**Reusing research from this session.** Full research costs many tool calls, so you can reuse what's already in this conversation, but only when all of these hold:
+- it was done within the last ~24 hours
+- it covered a memory budget at least as large as the current one
+- it collected the fields this run needs, including thinking-mode info if the user wants fast replies
+
+When you reuse:
+- Fill only the gaps the new answers create, e.g. non-thinking scores, a new license filter, or a larger budget.
+- Re-check on the model card any top-5 entry whose data is vendor-only, uncertain, or was never checked directly.
+- Say in the report's Caveats that research was reused and what was re-checked.
+
+Memory from earlier conversations doesn't count. Research fresh in that case.
+
 **If you can run subagents, run them in parallel:**
 - one per model family group, e.g. Qwen + DeepSeek; Gemma + Phi + Granite; Llama + Mistral + gpt-oss + OLMo + SmolLM
 - one for releases from the last ~6 months plus the official BFCL leaderboard data
@@ -89,10 +101,10 @@ Give each agent the user's memory budget, use case, and the fields listed below.
 - **Replacement benchmarks.** Many 2025–2026 model cards dropped the classic benchmarks. When the classic one isn't reported, use a replacement and label it, e.g. "MMLU-Redux 91.1". The thresholds in step 3 list which replacements are accepted.
 - **When speed matters** (the user answered "Yes, fast replies"): use the **non-thinking** score when the card publishes both. If only thinking-mode scores exist, use them and mark them "(thinking)".
 - **BFCL comes in kinds that can't be compared:**
-  - **vendor v3** and **vendor v4**: the model maker's own run, as shown on the model card
+  - **v3 / v4 reported runs:** BFCL v3 or v4 overall scores reported on a model card or in a paper. They are either the model maker's own run (**vendor**) or another lab's (**independent**). Both use the same scale, where small models score about 50–70.
   - **official V4**: the Berkeley leaderboard, where the best small models score only about 40–55%
 
-  Record which kind every BFCL number is.
+  Label every BFCL number with its kind, e.g. "v3 vendor", "v4 independent" or "official V4".
 
 ## Step 3: Filter and rank
 
@@ -113,7 +125,7 @@ Licenses with conditions (revenue caps, required attribution, user limits) are k
 | HumanEval | 50 | 70 | HumanEval+, EvalPlus (same bars) |
 | MBPP | 50 | 65 | MBPP+ (same bars) |
 | IFEval | 65 | 78 | any IFEval variant (strict/loose, prompt/instruction level); note which |
-| BFCL | 45 | 55 | **vendor v3 or vendor v4 overall only**. Official V4 leaderboard numbers are a cross-check, never compared against these bars. |
+| BFCL | 45 | 55 | **v3 or v4 overall reported runs only, vendor or independent.** Prefer vendor if both exist and say so if they differ widely. Official V4 leaderboard numbers are a cross-check, never compared against these bars. |
 
 If a model has only an official-V4 BFCL score, judge it against the other models' official-V4 scores and say so in the report.
 
@@ -151,11 +163,11 @@ _Researched <date>. Scores are as published by each source; check the links._
 2–4 lines: pool size and families, the memory rule, the bars used, and the weights.
 
 ## Top 5 at a glance
-| # | Model | Params | Min memory (Q4) | MMLU | GSM8K | MATH | HumanEval | MBPP | IFEval | BFCL | License | Score |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | [Name](HF link) | 8B | 6.9 GB | 73.8 | 92.5 | n/r | 85.4 | 87.3 | **87.1** | **68.3** (v3 vendor) | Apache-2.0 | 7.55 |
+| # | Model | Params | Min memory (Q4) | MMLU | GSM8K | MATH | HumanEval | MBPP | IFEval | BFCL | Thinking | License | Score |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | [Name](HF link) | 8B | 6.9 GB | 73.8 | 92.5 | n/r | 85.4 | 87.3 | **87.1** | **68.3** (v3 vendor) | none | Apache-2.0 | 7.55 |
 
-(Bold the benchmarks marked High. Use "n/r" for not reported. Put replacements and caveats in numbered footnotes under the table.)
+(Bold the benchmarks marked High. Use "n/r" for not reported. Thinking is none / switchable / on by default / always on. Mark thinking-mode scores with "ᵗ". Put replacements and caveats in numbered footnotes under the table.)
 
 ## 1. <Model name>
 **Why it fits:** 1–2 sentences tied to the user's priorities.
